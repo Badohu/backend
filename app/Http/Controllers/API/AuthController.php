@@ -18,6 +18,10 @@ class AuthController extends Controller
      */
     public function login(Request $request): JsonResponse
     {
+        \Log::info('Login attempt for email: ' . $request->email);
+        \Log::info($request->all());
+        
+        //return response()->json(['message' => 'Login functionality is currently disabled.'], 503);
         // 1. Validate incoming credentials
         $request->validate([
             'email' => 'required|email',
@@ -29,9 +33,12 @@ class AuthController extends Controller
         // 2. Check credentials securely
         if (!$user || !Hash::check($request->password, $user->password)) {
             // Throw exception for failed secure sign-in 
-            throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
-            ]);
+            // throw ValidationException::withMessages([
+            //     'email' => ['The provided credentials are incorrect.'],
+            // ]);
+            return response()->json([
+                 'message' => 'User profile incomplete. Contact system admin.'
+             ], 403);
         }
         
         // 3. Structural Mapping Check (Per project requirement)
