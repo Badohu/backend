@@ -34,8 +34,8 @@ class BudgetController extends Controller
     public function store(Request $request): JsonResponse
     {
         // Authorization: Checks BudgetPolicy@create (restricted to Finance Manager).
-        $this->authorize('create', Budget::class); 
-
+        // $this->authorize('create', Budget::class); 
+        // \Log::info($request->all());
         $validated = $request->validate([
             // 🟢 Aligned with Budgets table migration
             'name' => 'required|string|max:255|unique:budgets,name',
