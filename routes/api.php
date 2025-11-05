@@ -30,7 +30,7 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     Route::post('/notifications/mark-read', [NotificationController::class, 'markAllAsRead']);
     Route::delete('/notifications/{id}', [NotificationController::class, 'destroy']);
 
-    
+       
 
     // --- Dashboard Overview ---
     Route::get('/dashboard/overview', [DashboardController::class, 'index']);
