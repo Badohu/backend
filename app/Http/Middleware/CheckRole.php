@@ -11,33 +11,49 @@ class CheckRole
 {
     /**
      * Handle an incoming request.
-     * Checks if the authenticated user has any of the roles specified in the route.
+     * Checks if the authenticated user has any of the specified roles or permissions.
      *
-     * @param  string ...$roles The list of allowed role names (e.g., 'CEO', 'Finance Manager')
+     * @param  string ...$roles The list of allowed role names (e.g., 'CEO') or permission keys (e.g., 'can_create_budget').
      */
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        // 1. Check if the user is authenticated
+        // 1. Authentication Check
         if (!Auth::check()) {
             return response()->json(['message' => 'Unauthenticated.'], 401);
         }
         
         $user = Auth::user();
 
-        // 2. Check if the user has a role defined
-        // We assume the User model has a relationship named 'role'
+        // 2. Role Existence Check
         if (!$user->role) {
             return response()->json(['message' => 'Access Denied. User role not defined.'], 403);
         }
 
-        $userRoleName = $user->role->name; 
+        $userRoleName = $user->role->name;
+        $permissions = json_decode($user->role->permissions ?? '{}', true);
 
-        // 3. Check if the user's role is in the list of allowed roles
-        if (in_array($userRoleName, $roles)) {
-            return $next($request); // Access granted: Proceed to the controller
+        // 3. CEO/Superadmin Override (CRITICAL NEW LOGIC)
+        // The CEO role grants universal access regardless of the specific argument provided.
+        if ($userRoleName === 'CEO') {
+             return $next($request);
+        }
+        
+        // 4. Check Roles OR Permissions
+        // Iterate through all required arguments (roles or permissions)
+        foreach ($roles as $requiredRoleOrPermission) {
+            
+            // A. Check if the argument is a simple role name
+            if ($userRoleName === $requiredRoleOrPermission) {
+                return $next($request);
+            }
+            
+            // B. Check if the argument is a permission key
+            if (isset($permissions[$requiredRoleOrPermission]) && $permissions[$requiredRoleOrPermission] === true) {
+                return $next($request);
+            }
         }
 
-        // 4. Deny access if the role doesn't match
-        return response()->json(['message' => 'Access Denied. Insufficient role privileges for this action.'], 403);
+        // 5. Deny access if no match is found
+        return response()->json(['message' => 'Access Denied. Insufficient privileges for this action.'], 403);
     }
 }

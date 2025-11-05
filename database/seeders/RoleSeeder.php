@@ -18,7 +18,6 @@ class RoleSeeder extends Seeder
             // ----------------------------------------------------
             [
                 'name' => 'CEO',
-                // The 'permissions' key must be defined as a single array/JSON value
                 'permissions' => [
                     'can_view_all_request' => true,
                     'can_approve_request' => true,
@@ -29,6 +28,10 @@ class RoleSeeder extends Seeder
                     'can_create_request' => true,
                     'can_upload_documents' => true,
                     'can_create_budget' => true,
+                    'can_create_user'=> true,
+                    'can_view_audit_logs' => true,
+                    'can_manage_roles' => true,
+                    
                 ],
             ],
 
@@ -43,6 +46,8 @@ class RoleSeeder extends Seeder
                     'can_create_request' => true, // Can submit requests
                     'can_create_budget' => true, // Can submit budget proposals
                     'can_upload_documents' => true, 
+                    'can_manage_budgets' => true,
+                    'can_create_user'=> true,
                 ],
             ],
             
@@ -65,9 +70,11 @@ class RoleSeeder extends Seeder
             [
                 'name' => 'HR',
                 'permissions' => [
-                    'can_view_all_request' => true, // For general auditing
+                    'can_view_all_request' => true, 
                     'can_create_request' => true,
                     'can_upload_documents' => true,
+                    'can_view_all_budgets' => true,
+                    'can_create_user'=> true,
                 ],
             ],
         ];

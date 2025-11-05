@@ -10,7 +10,7 @@ use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\ProjectController; 
 use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\NotificationController;
-
+use App\Http\Controllers\Api\DashboardController;
 // ----------------------------------------------------------------------
 // 1. PUBLIC ROUTES (Authentication)
 // ----------------------------------------------------------------------
@@ -25,10 +25,16 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     
     // --- User Profile & Notifications ---
-    Route::get('/user', [AuthController::class, 'showAuthenticatedUser']); 
+    Route::get('/auth/user', [AuthController::class, 'showAuthenticatedUser']); 
     Route::get('/notifications', [NotificationController::class, 'index']);
     Route::post('/notifications/mark-read', [NotificationController::class, 'markAllAsRead']);
     Route::delete('/notifications/{id}', [NotificationController::class, 'destroy']);
+
+    
+
+    // --- Dashboard Overview ---
+    Route::get('/dashboard/overview', [DashboardController::class, 'index']);
+// ...
     
 // --- Commenting & Feedback (New Routes) ---
     // GET: Fetch all comments for a request
@@ -63,7 +69,7 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     
     // CRUD for budgets (store=create). Restricted to roles with 'can_create_budget'.
     Route::apiResource('budgets', BudgetController::class)->only(['index', 'show', 'store', 'update'])
-        ->middleware('role:Finance Manager,CEO'); // ⬅️ FM & CEO have 'can_create_budget'
+        ->middleware('role:Finance Manager,CEO'); //  FM & CEO have 'can_create_budget'
     
     // Budget Approval: Restricted strictly to the CEO (only role with 'can_manage_budgets').
     Route::post('budgets/{budget}/approve', [BudgetController::class, 'approve'])

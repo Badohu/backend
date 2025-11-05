@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -19,34 +20,38 @@ class AuthController extends Controller
     public function login(Request $request): JsonResponse
     {
         // 1. Validate incoming credentials
-        $request->validate([
+        $validated = $request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
-
+        if(!$validated){
+            return response()->json([
+                'message' => 'Invalid input data.'
+            ], 422);
+        }
         $user = User::where('email', $request->email)->first();
 
-        // 2. Check credentials securely
+        // // 2. Check credentials securely
         if (!$user || !Hash::check($request->password, $user->password)) {
             // Throw exception for failed secure sign-in 
-            throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
-            ]);
+          return response()->json([
+                 'message' => 'The provided credentials are incorrect.'
+             ], 401);
         }
         
-        // 3. Structural Mapping Check (Per project requirement)
-        // Ensure user is assigned a role and department before granting access.
+        // // 3. Structural Mapping Check (Per project requirement)
+        // // Ensure user is assigned a role and department before granting access.
         if (!$user->role_id || !$user->department_id) {
              return response()->json([
                  'message' => 'User profile incomplete. Contact system admin.'
              ], 403);
         }
 
-        // 4. Token Generation
+        // // 4. Token Generation
         $token = $user->createToken('opex-api-token')->plainTextToken;
 
         return response()->json([
-            'user' => $user->only(['id', 'name', 'email', 'role_id']),
+            'user' => $user->only(['id', 'name', 'email', ]),
             'token' => $token,
         ]);
     }
@@ -72,8 +77,8 @@ class AuthController extends Controller
         // Auth::user() automatically returns the authenticated User model
         $user = $request->user();
 
-        // Load relationships (role, department, cost center) for access control context [cite: 8]
-        $user->load(['role', 'department', 'costCenter']);
+        // Load relationships (role, department) for access control context [cite: 8]
+        $user->load(['role', 'department']);
 
         return response()->json([
             'id' => $user->id,
@@ -85,7 +90,7 @@ class AuthController extends Controller
                 'permissions' => $user->role->permissions,
             ],
             'department' => $user->department->only(['id', 'name', 'code']),
-            'cost_center' => $user->costCenter->only(['id', 'name', 'code']),
+    
         ]);
     }
     

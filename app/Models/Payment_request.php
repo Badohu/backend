@@ -29,9 +29,4 @@ class PaymentRequest extends Model
         return $this->belongsTo(Project::class);
     }
 
-    // Documents associated with the request [cite: 30]
-    public function documents(): HasMany
-    {
-        return $this->hasMany(PaymentRequestDoc::class);
-    }
 }

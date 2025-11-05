@@ -13,7 +13,7 @@ class DepartmentSeeder extends Seeder
             ['name' => 'Finance', 'code' => 'FIN'],
             ['name' => 'Human Resources', 'code' => 'HR'],
             ['name' => 'Executive Office', 'code' => 'CEO'],
-            // Add any other departments your users require
+          
         ];
 
         foreach ($departments as $data) {
