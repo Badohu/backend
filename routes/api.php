@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\Api\PaymentRequestController;
 use App\Http\Controllers\Api\BudgetController;
 use App\Http\Controllers\Api\UserController;
