@@ -6,21 +6,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Traits\DepartmentScope; 
 
 class Project extends Model
 {
-    use HasFactory;
+    use HasFactory, DepartmentScope; 
 
     protected $fillable = [
         'name',
         'department_id',
+        'status', // <-- ADDED: Assuming projects need a status (e.g., Active, Completed)
     ];
 
     // --- Relationships ---
 
     /**
      * A Project belongs to a single Department.
-     * (Defined by the foreign key `department_id` in the projects table).
      */
     public function department(): BelongsTo
     {
@@ -36,7 +37,7 @@ class Project extends Model
     }
 
     /**
-     * A Project can be part of multiple Budgets (e.g., annual vs. project-specific).
+     * A Project can be part of multiple Budgets.
      */
     public function budgets(): HasMany
     {

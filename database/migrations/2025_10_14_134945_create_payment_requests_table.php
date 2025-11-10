@@ -28,7 +28,7 @@ return new class extends Migration
             $table->text('description');
             $table->decimal('amount', 15, 2);
             $table->string('vendor_name');
-            $table->text('vendor_details');
+            $table->text('vendor_details')->nullable();
             $table->string('expense_category');
 
             // Workflow Status
@@ -36,9 +36,9 @@ return new class extends Migration
             $table->text('rejection_reason')->nullable();
             
             // Timestamp tracking
-            $table->timestamp('submitted_at')->nullable();
-            $table->timestamp('approved_at')->nullable();
-            $table->timestamp('paid_at')->nullable();
+            //$table->timestamp('submitted_at')->nullable();
+            //$table->timestamp('approved_at')->nullable();
+            //$table->timestamp('paid_at')->nullable();
             $table->timestamps();
         });
     }

@@ -7,69 +7,70 @@ use App\Models\Role;
 
 class RoleSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $roles = [
             // ----------------------------------------------------
-            // CEO Role
+            // CEO Role 
             // ----------------------------------------------------
             [
                 'name' => 'CEO',
                 'permissions' => [
+                    'can_view_all_department_data' => true, // Grant Global View
                     'can_view_all_request' => true,
                     'can_approve_request' => true,
                     'can_reject_request' => true,
                     'can_view_all_budgets' => true,
                     'can_manage_budgets' => true,
-                    'can_mark_as_paid' => true, // CEO can also execute payment
+                    'can_mark_as_paid' => true,
                     'can_create_request' => true,
                     'can_upload_documents' => true,
                     'can_create_budget' => true,
                     'can_create_user'=> true,
                     'can_view_audit_logs' => true,
                     'can_manage_roles' => true,
-                    
                 ],
             ],
 
             // ----------------------------------------------------
-            // Finance Manager Role
+            // Finance Manager Role (Budget Oversight + Global Scope)
             // ----------------------------------------------------
             [
                 'name' => 'Finance Manager', 
                 'permissions' => [
+                    'can_view_all_department_data' => true, // Grant Global View
                     'can_view_all_budgets' => true,
                     'can_view_all_request' => true,
-                    'can_create_request' => true, // Can submit requests
-                    'can_create_budget' => true, // Can submit budget proposals
+                    'can_create_request' => true,
+                    'can_create_budget' => true,
                     'can_upload_documents' => true, 
-                    'can_manage_budgets' => true,
+                    'can_manage_budgets' => true, // EXCLUSIVE BUDGET MANAGEMENT
                     'can_create_user'=> true,
                 ],
             ],
             
             // ----------------------------------------------------
-            // Finance Officer Role
+            // Finance Officer Role (Payment Execution + Global Scope)
             // ----------------------------------------------------
             [
                 'name' => 'Finance Officer',
                 'permissions' => [
+                    'can_view_all_department_data' => true, // Grant Global View
                     'can_view_all_request' => true,
                     'can_view_all_budgets' => true,
+                    'can_mark_as_paid' => true, // PAYMENT EXECUTION
                     'can_create_request' => true,
                     'can_upload_documents' => true,
                 ],
             ],
             
             // ----------------------------------------------------
-            // HR Role (View-only for requests)
+            // HR Role (User Management/Requesting + Global Scope)
             // ----------------------------------------------------
             [
                 'name' => 'HR',
                 'permissions' => [
+                    'can_view_all_department_data' => true, // Grant Global View
                     'can_view_all_request' => true, 
                     'can_create_request' => true,
                     'can_upload_documents' => true,
@@ -77,11 +78,22 @@ class RoleSeeder extends Seeder
                     'can_create_user'=> true,
                 ],
             ],
+
+            // ----------------------------------------------------
+            // Requestor Role (Departmental View ONLY)
+            // ----------------------------------------------------
+            [
+                'name' => 'Requestor',
+                'permissions' => [
+                    'can_view_department_request' => true,
+                    'can_create_request' => true,
+                    'can_upload_documents' => true,
+                    'can_view_department_budgets' => true,
+                ],
+            ],
         ];
 
         foreach ($roles as $roleData) {
-            // updateOrCreate expects $roleData to contain only column names as keys.
-            // The JSON casting in the Role model handles the 'permissions' array.
             Role::updateOrCreate(['name' => $roleData['name']], $roleData);
         }
     }

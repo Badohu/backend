@@ -13,7 +13,7 @@ class CheckRole
      * Handle an incoming request.
      * Checks if the authenticated user has any of the specified roles or permissions.
      *
-     * @param  string ...$roles The list of allowed role names (e.g., 'CEO') or permission keys (e.g., 'can_create_budget').
+     * @param  string ...$roles The list of allowed role names (e.g., 'CEO') or permission keys (e.g., 'can_create_budget').
      */
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
@@ -30,12 +30,19 @@ class CheckRole
         }
 
         $userRoleName = $user->role->name;
-        $permissions = json_decode($user->role->permissions ?? '{}', true);
+        
+        // 🛑 FIX: Use the attribute directly. It should be a PHP array 
+        // because the 'permissions' column is cast to 'array' in the Role model.
+        // Use ?? [] to default to an empty array if permissions is null.
+        $permissions = $user->role->permissions ?? []; 
+        
+        // --- NOTE: Your existing code had this problematic line:
+        // $permissions = json_decode($user->role->permissions ?? '{}', true);
 
         // 3. CEO/Superadmin Override (CRITICAL NEW LOGIC)
         // The CEO role grants universal access regardless of the specific argument provided.
         if ($userRoleName === 'CEO') {
-             return $next($request);
+            return $next($request);
         }
         
         // 4. Check Roles OR Permissions

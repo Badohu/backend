@@ -25,7 +25,7 @@ return new class extends Migration
             $table->json('old_values')->nullable(); // Original data before action
             $table->json('new_values')->nullable(); // New data after action
 
-            $table->timestamp('created_at')->useCurrent();
+            $table->timestamps();
         });
     }
 

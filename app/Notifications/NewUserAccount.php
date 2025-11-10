@@ -6,7 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class UserCreated extends Notification
+class NewUserAccount extends Notification
 {
     use Queueable;
 
